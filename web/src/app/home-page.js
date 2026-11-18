@@ -10,11 +10,11 @@ import Header from '../components/header';
 import Sidebar from '../components/sidebar';
 import Icon from '../components/icon';
 import Spinner from '../components/spinner';
+import LargeResult, { RESULT_CHUNK_SIZE } from '../components/large-result';
 import { formatByVersion } from '../lib/api';
 import { isRuntimeLog } from '../lib/runtime-log.mjs';
 
 const MANUAL_THRESHOLD = 32_000;
-const PREVIEW_LIMIT = 32_000;
 const SHARE_STATE_LIMIT = 1_800;
 
 const Editor = dynamic(() => import('../components/editor'), { ssr: false });
@@ -31,7 +31,7 @@ export default function HomePage({ props }) {
   const [submittedSource, setSubmittedSource] = useState(null);
   const isLong = source.length > MANUAL_THRESHOLD;
   const runtimeLog = isRuntimeLog(source);
-  const previewTruncated = formatted.length > PREVIEW_LIMIT;
+  const largeResult = formatted.length > RESULT_CHUNK_SIZE;
   const [issueLink, setIssueLink] = useState(props.issueLink);
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
   const [debouncedSource] = useDebounceValue(source, 100);
@@ -208,14 +208,8 @@ export default function HomePage({ props }) {
                 <div className="flex items-center justify-center w-full ace-tomorrow-night">
                   <Spinner />
                 </div>
-              ) : previewTruncated ? (
-                <textarea
-                  className="w-full resize-none bg-slate-900 text-white font-mono"
-                  aria-label="格式化预览"
-                  readOnly
-                  wrap="off"
-                  value={formatted.slice(0, PREVIEW_LIMIT)}
-                />
+              ) : largeResult ? (
+                <LargeResult value={formatted} />
               ) : (
                 <Editor
                   value={formatted}
@@ -251,8 +245,7 @@ export default function HomePage({ props }) {
               </button>
             )}
             {error && <span role="alert">{error}</span>}
-            {previewTruncated && <span>仅显示前 32,000 个字符</span>}
-            {previewTruncated && (
+            {!isLoading && largeResult && (
               <button type="button" className="font-bold underline" onClick={downloadResult}>
                 下载完整结果
               </button>
