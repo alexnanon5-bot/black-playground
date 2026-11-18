@@ -6,7 +6,7 @@ import 'ace-builds/src-noconflict/mode-python';
 import 'ace-builds/src-noconflict/theme-tomorrow_night';
 import 'ace-builds/src-min-noconflict/ext-searchbox';
 
-export default function Editor({ readOnly, marginColumn, value, onChange }) {
+export default function Editor({ readOnly, marginColumn, value, onChange, onLoad }) {
   const name = readOnly ? 'readonly' : 'editor';
 
   return (
@@ -20,6 +20,7 @@ export default function Editor({ readOnly, marginColumn, value, onChange }) {
       readOnly={readOnly}
       value={value}
       onChange={onChange}
+      onLoad={onLoad}
       setOptions={{ printMarginColumn: marginColumn }}
       editorProps={{ $blockScrolling: true }}
     />
