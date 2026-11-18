@@ -24,14 +24,16 @@ export async function loadState(version, state) {
   ).json();
 }
 
-export function formatByVersion(version, data) {
+export function formatByVersion(version, data, signal) {
   return fetch(urlByVersion(version), {
     method: 'POST',
+    signal,
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(data),
   }).then((res) => {
+    if (!res.ok) throw new Error(`Formatting request failed: ${res.status}`);
     return res.json();
   });
 }
