@@ -1,3 +1,5 @@
+import { PHASE_DEVELOPMENT_SERVER } from 'next/constants.js';
+
 const STABLE_URL = 'https://1rctyledh3.execute-api.us-east-1.amazonaws.com/dev';
 const MAIN_URL = 'https://jobmcemp35.execute-api.us-east-1.amazonaws.com/dev';
 
@@ -17,4 +19,7 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+export default (phase) => ({
+  ...nextConfig,
+  distDir: phase === PHASE_DEVELOPMENT_SERVER ? '.next-dev' : '.next',
+});
